@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-Simple Test for Optimized Stable Hash
-=====================================
+稳定哈希优化版简单测试
+====================
 
-Basic functionality test without external dependencies.
+基础功能测试，无外部依赖。
 """
 
 import time
 from stable_hash_optimized import stable_hash_hex, stable_hash, register_type
 
 def f():
-    """Original test case from the Chinese specification"""
+    """原始测试用例（来自中文规范）"""
     va = {"float": [1.0, 2.0, 3.0, None, 4.0, None, 5.0] * 10}
     vb = {"int": [1, 2, 3, None, 4, None, 5] * 10}
     vc = {"str": ["1", "9", "2", "3", "None"] * 10 + ["4", "None", "5"] * 10}
@@ -20,8 +20,8 @@ def f():
     return f_
 
 def test_basic_functionality():
-    """Test basic stable hash functionality"""
-    print("Testing basic functionality...")
+    """测试基础稳定哈希功能"""
+    print("测试基础功能...")
     
     test_cases = [
         None,
@@ -42,21 +42,21 @@ def test_basic_functionality():
     for i, obj in enumerate(test_cases):
         try:
             hash_result = stable_hash_hex(obj)
-            print(f"✓ Case {i+1}: {type(obj).__name__} -> {hash_result[:16]}...")
+            print(f"✓ 用例 {i+1}: {type(obj).__name__} -> {hash_result[:16]}...")
         except Exception as e:
-            print(f"✗ Case {i+1}: {type(obj).__name__} -> ERROR: {e}")
+            print(f"✗ 用例 {i+1}: {type(obj).__name__} -> 错误: {e}")
             errors += 1
     
     if errors == 0:
-        print("✓ All basic tests passed!")
+        print("✓ 所有基础测试通过!")
     else:
-        print(f"✗ {errors} tests failed")
+        print(f"✗ {errors} 个测试失败")
     
     return errors == 0
 
 def test_consistency():
-    """Test that hashes are consistent across multiple runs"""
-    print("\nTesting consistency...")
+    """测试哈希结果在多次运行中的一致性"""
+    print("\n测试一致性...")
     
     test_obj = f()
     hashes = []
@@ -66,17 +66,17 @@ def test_consistency():
         hashes.append(h)
     
     if len(set(hashes)) == 1:
-        print(f"✓ Consistency test passed: {hashes[0]}")
+        print(f"✓ 一致性测试通过: {hashes[0]}")
         return True
     else:
-        print(f"✗ Inconsistent hashes: {hashes}")
+        print(f"✗ 哈希不一致: {hashes}")
         return False
 
 def test_deep_nesting():
-    """Test handling of deep nesting"""
-    print("\nTesting deep nesting...")
+    """测试深度嵌套处理"""
+    print("\n测试深度嵌套...")
     
-    # Create nested structure
+    # 创建嵌套结构
     current = "end"
     for i in range(1000):
         current = {"level": i, "next": current}
@@ -85,31 +85,31 @@ def test_deep_nesting():
         start_time = time.perf_counter()
         hash_result = stable_hash_hex(current)
         elapsed = time.perf_counter() - start_time
-        print(f"✓ Deep nesting (1000 levels): {hash_result[:16]}... ({elapsed:.3f}s)")
+        print(f"✓ 深度嵌套 (1000 层): {hash_result[:16]}... ({elapsed:.3f}s)")
         return True
     except Exception as e:
-        print(f"✗ Deep nesting failed: {e}")
+        print(f"✗ 深度嵌套失败: {e}")
         return False
 
 def test_custom_types():
-    """Test custom type support"""
-    print("\nTesting custom types...")
+    """测试自定义类型支持"""
+    print("\n测试自定义类型...")
     
     class Point:
         def __init__(self, x, y):
             self.x = x
             self.y = y
     
-    # Test without registration (should fail)
+    # 测试未注册（应该失败）
     point = Point(1.0, 2.0)
     try:
         stable_hash_hex(point)
-        print("✗ Custom type worked without registration")
+        print("✗ 自定义类型在未注册时也能工作")
         return False
     except TypeError:
-        print("✓ Custom type properly rejected without registration")
+        print("✓ 自定义类型正确拒绝未注册")
     
-    # Register and test
+    # 注册并测试
     def point_handler(p):
         return f"point:{p.x},{p.y}".encode()
     
@@ -117,24 +117,24 @@ def test_custom_types():
     
     try:
         hash_result = stable_hash_hex(point)
-        print(f"✓ Custom type with registration: {hash_result[:16]}...")
+        print(f"✓ 自定义类型注册后工作: {hash_result[:16]}...")
         
-        # Test consistency
+        # 测试一致性
         point2 = Point(1.0, 2.0)
         hash_result2 = stable_hash_hex(point2)
         if hash_result == hash_result2:
-            print("✓ Custom type hashes are consistent")
+            print("✓ 自定义类型哈希一致")
             return True
         else:
-            print("✗ Custom type hashes are inconsistent")
+            print("✗ 自定义类型哈希不一致")
             return False
     except Exception as e:
-        print(f"✗ Custom type registration failed: {e}")
+        print(f"✗ 自定义类型注册失败: {e}")
         return False
 
 def test_special_values():
-    """Test special floating point values"""
-    print("\nTesting special values...")
+    """测试特殊浮点值"""
+    print("\n测试特殊值...")
     
     special_values = [
         0.0, -0.0, float('inf'), float('-inf'), float('nan')
@@ -149,26 +149,26 @@ def test_special_values():
             print(f"✗ {val}: {e}")
             errors += 1
     
-    # Test that -0.0 and 0.0 produce same hash
+    # 测试 -0.0 和 0.0 产生相同哈希
     try:
         hash_pos_zero = stable_hash_hex(0.0)
         hash_neg_zero = stable_hash_hex(-0.0)
         if hash_pos_zero == hash_neg_zero:
-            print("✓ -0.0 and 0.0 produce same hash (normalized)")
+            print("✓ -0.0 和 0.0 产生相同哈希（已归一化）")
         else:
-            print("✗ -0.0 and 0.0 produce different hashes")
+            print("✗ -0.0 和 0.0 产生不同哈希")
             errors += 1
     except Exception as e:
-        print(f"✗ Zero normalization test failed: {e}")
+        print(f"✗ 零值归一化测试失败: {e}")
         errors += 1
     
     return errors == 0
 
 def run_performance_test():
-    """Simple performance test"""
-    print("\nRunning performance test...")
+    """简单性能测试"""
+    print("\n运行性能测试...")
     
-    # Create test data
+    # 创建测试数据
     test_data = []
     for i in range(1000):
         test_data.append({
@@ -182,11 +182,11 @@ def run_performance_test():
     elapsed = time.perf_counter() - start_time
     
     objects_per_second = len(test_data) / elapsed
-    print(f"Performance: {elapsed:.3f}s for {len(test_data)} objects ({objects_per_second:.0f} obj/s)")
+    print(f"性能: {elapsed:.3f}s 处理 {len(test_data)} 对象 ({objects_per_second:.0f} obj/s)")
 
 def main():
-    """Run all tests"""
-    print("Optimized Stable Hash - Simple Test Suite")
+    """运行所有测试"""
+    print("稳定哈希优化版 - 简单测试套件")
     print("=" * 50)
     
     tests = [
@@ -204,12 +204,12 @@ def main():
     
     run_performance_test()
     
-    print(f"\nSUMMARY: {passed}/{len(tests)} tests passed")
+    print(f"\n总结: {passed}/{len(tests)} 测试通过")
     
     if passed == len(tests):
-        print("🎉 ALL TESTS PASSED - Implementation is working correctly!")
+        print("🎉 所有测试通过 - 实现工作正常!")
     else:
-        print("❌ Some tests failed - Review needed")
+        print("❌ 部分测试失败 - 需要检查")
     
     return passed == len(tests)
 
